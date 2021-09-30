@@ -1,0 +1,282 @@
+﻿@model PartnerWebApp.Models.ResponseModel;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="float-left">
+    <a class="btn btn-outline-info" href="@Url.ActionLink("Dashboard", "Home")">Go Back</a>
+    <a class="btn btn-outline-info" id="showhidejson" style="cursor:pointer">Show JSON</a>
+</div>
+<div class="text-center" style="clear:both;padding-top:1px;">
+    <hr />
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    @if (Model.Categories?.Categories.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Category Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Categories.Categories)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.CategoryName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.ClientMemberships?.ClientMemberships.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Membership Id</th>
+                    <th scope="col">Membership Name</th>
+                    <th scope="col">Site Id</th>
+                    <th scope="col">Activation Date</th>
+                    <th scope="col">Expiration Date</th>
+                    <th scope="col">Payment Date</th>
+                    <th scope="col">Program Name</th>
+                    <th scope="col">Program Schedule Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ClientMemberships.ClientMemberships)
+                {
+                    <tr>
+                        <td>@item.MembershipId</td>
+                        <td>@item.Name</td>
+                        <td>@item.SiteId</td>
+                        <td>@item.ActiveDate</td>
+                        <td>@item.ExpirationDate</td>
+                        <td>@item.PaymentDate</td>
+                        <td>@item.Program?.Name</td>
+                        <td>@item.Program?.ScheduleType</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.Clients?.Clients.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Client Id</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Account Balance</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Clients.Clients)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.FirstName</td>
+                        <td>@item.LastName</td>
+                        <td>@item.Email</td>
+                        <td>@item.City</td>
+                        <td>@item.AccountBalance</td>
+                        <td>@item.Active</td>
+                        <td>@item.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.ClientVisits?.ClientVisits.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Visit Id</th>
+                    <th scope="col">Client Id</th>
+                    <th scope="col">Site Id</th>
+                    <th scope="col">Location Id</th>
+                    <th scope="col">Appointment Id</th>
+                    <th scope="col">Appointment Status</th>
+                    <th scope="col">Class Id</th>
+                    <th scope="col">Start DateTime</th>
+                    <th scope="col">End DateTime</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ClientVisits.ClientVisits)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.ClientId</td>
+                        <td>@item.SiteId</td>
+                        <td>@item.LocationId</td>
+                        <td>@item.AppointmentId</td>
+                        <td>@item.AppointmentStatus</td>
+                        <td>@item.ClassId</td>
+                        <td>@item.StartDateTime</td>
+                        <td>@item.EndDateTime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.PaymentTypes?.PaymentTypes.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Payment Type Name</th>
+                    <th scope="col">Fees</th>
+                    <th scope="col">Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PaymentTypes.PaymentTypes)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.PaymentTypeName</td>
+                        <td>@item.Fee</td>
+                        <td>@item.Active</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.Sales?.Sales.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Sale Id</th>
+                    <th scope="col">Client Id</th>
+                    <th scope="col">Location Id</th>
+                    <th scope="col">Sale DateTime</th>
+                    <th scope="col">Sales Rep Id</th>
+                    <th scope="col">Category Id</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Discount Percentage</th>
+                    <th scope="col">Tax Amount</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Payment Type</th>
+                    <th scope="col">Transaction Id</th>
+                    <th scope="col">Returned</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Sales.Sales)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.ClientId</td>
+                        <td>@item.LocationId</td>
+                        <td>@item.SaleDateTime</td>
+                        <td>@item.SalesRepId</td>
+                        <td>@item.PurchasedItems[0].CategoryId</td>
+                        <td>@item.PurchasedItems[0].UnitPrice</td>
+                        <td>@item.PurchasedItems[0].Quantity</td>
+                        <td>@item.PurchasedItems[0].DiscountPercent</td>
+                        <td>@item.PurchasedItems[0].TaxAmount</td>
+                        <td>@item.PurchasedItems[0].TotalAmount</td>
+                        <td>@item.Payments[0].Type</td>
+                        <td>@item.Payments[0].TransactionId</td>
+                        <td>@item.PurchasedItems[0].Returned</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.Transactions?.Transactions.Count > 0)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Transaction Id</th>
+                    <th scope="col">Client Id</th>
+                    <th scope="col">Location Id</th>
+                    <th scope="col">Sale Id</th>
+                    <th scope="col">Transaction DateTime</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Transactions.Transactions)
+                {
+                    <tr>
+                        <td>@item.TransactionId</td>
+                        <td>@item.ClientId</td>
+                        <td>@item.LocationId</td>
+                        <td>@item.SaleId</td>
+                        <td>@item.TransactionTime</td>
+                        <td>@item.Amount</td>
+                        <td>@item.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.ClientCompleteInfos != null && Model.ClientCompleteInfos.Client != null)
+    {
+        <table class="table table-striped table-bordered table-responsive-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Client Id</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Account Balance</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.ClientCompleteInfos.Client.Id</td>
+                    <td>@Model.ClientCompleteInfos.Client.FirstName</td>
+                    <td>@Model.ClientCompleteInfos.Client.LastName</td>
+                    <td>@Model.ClientCompleteInfos.Client.Email</td>
+                    <td>@Model.ClientCompleteInfos.Client.City</td>
+                    <td>@Model.ClientCompleteInfos.Client.AccountBalance</td>
+                    <td>@Model.ClientCompleteInfos.Client.Active</td>
+                    <td>@Model.ClientCompleteInfos.Client.Status</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+
+</div>
+<div id="jsonContent" class="text-justify" style="display:none">
+    @if (!String.IsNullOrWhiteSpace(Model.beautifyContent))
+    {
+        <code> @Html.Raw(Model.beautifyContent)</code>
+    }
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#showhidejson").click(function () {
+            if ($("#showhidejson").text() == "Show JSON") {
+                $("#showhidejson").text('Hide JSON')
+            } else {
+                $("#showhidejson").text('Show JSON')
+            }
+            $("#jsonContent").toggle();
+        });
+    });
+</script>

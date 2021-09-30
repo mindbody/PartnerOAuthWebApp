@@ -1,0 +1,16 @@
+﻿@model PartnerWebApp.Models.AuthViewModel;
+@{
+    ViewData["Title"] = "Get Data";
+}
+<div class="text-center">
+    <h3>Step 4: Yay!! Now I can access the site data using Public API.</h3>
+
+    <hr /><h3>Door Access Endpoints</h3><hr />
+    <button onclick="location.href='@Url.Action("GetActiveClientsMemberships", "Home")'" class="btn btn-sm btn-outline-danger">GET ActiveClientsMemberships</button>
+    <button onclick="location.href='@Url.Action("GetClientCompleteInfo", "Home")'" class="btn btn-sm btn-outline-danger">GET ClientCompleteInfo</button>
+    <hr /><h3>Accounting Endpoints</h3><hr />
+    <button onclick="location.href='@Url.Action("GetCategories", "Home")'" class="btn btn-sm btn-outline-danger">GET Categories</button>
+    <button onclick="location.href='@Url.Action("GetPaymentTypes", "Home")'" class="btn btn-sm btn-outline-danger">GET PaymentTypes</button>
+    <button onclick="location.href='@Url.Action("GetSales", "Home")'" class="btn btn-sm btn-outline-danger">GET Sales</button>
+    <button onclick="location.href='@Url.Action("GetTransactions", "Home")'" class="btn btn-sm btn-outline-danger">GET Transactions</button>
+</div>

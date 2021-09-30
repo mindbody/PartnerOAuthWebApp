@@ -1,0 +1,54 @@
+﻿@model PartnerWebApp.Models.ActivationDataModel;
+@{
+    ViewData["Title"] = "My Sample Application";
+}
+
+<div class="text-center">
+   
+    @if (Model != null && !string.IsNullOrWhiteSpace(@Model.ActivationCode))
+    {
+        <h4>Step 2: Let me get an approval from the studio staff.</h4>
+
+        <div class="row" style="margin-top:10px;">
+            <div class="col-2">
+                <label>Activation Code:</label>
+            </div>
+            <div class="col-9">
+                <input placeholder="Activation Code" asp-for="ActivationCode" id="activationCode" class="form-control" />
+            </div>
+            <div class="col-1">
+                <a href="#"></a>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-2">
+                <label>Activation Link:</label>
+            </div>
+            <div class="col-9">
+                <input placeholder="Activation Link" asp-for="ActivationLink" id="activationLink" class="form-control" />
+            </div>
+            <div class="col-1">
+                <a href="@Model.ActivationLink" target="_blank">Navigate</a>
+            </div>
+        </div>
+
+        <button style="margin-top:10px;" onclick="location.href='@Url.Action("LoginForm", "Home")'" class="btn btn-sm btn-info">Go To Step 3</button>
+    }
+    else
+    {
+<h4>Step 1: Let me connect with a Mindbody Studio.</h4>
+
+        @using (Html.BeginForm("GetActivationData", "Home", FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-6">
+                    <input placeholder="Studio Id" asp-for="StudioId" id="studioId" class="form-control" />
+                </div>
+                <div class="col-6">
+                    <input placeholder="API Key" asp-for="ApiKey" id="studioId" class="form-control" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-sm btn-info" style="margin-top:10px;">Get Activation Link/Code</button>
+        }
+    }
+</div>
