@@ -13,8 +13,8 @@ namespace PartnerWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly string authErrorMessage = "You are not authorized to use this page.";
-        private readonly string clientId = "100000001";
+        private const string authErrorMessage = "You are not authorized to use this page.";
+        private const string clientId = "100000001";
 
         public HomeController(IConfiguration configuration)
         {
