@@ -2,6 +2,8 @@
 
 ## PartnerOAuthWebApp
 
+This is a low-level pattern partners may choose to integrate, but Mindbody Identity is fully OpenID Connect compatible and libraries or packages specific to your language which contain this functionality should be preferred.
+
 You'll need to follow these processes in the order given.
 
 **OAuth**

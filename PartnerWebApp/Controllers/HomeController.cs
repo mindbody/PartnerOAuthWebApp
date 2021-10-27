@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using PartnerWebApp.Helpers;
 using PartnerWebApp.Models;
 using RestSharp;
 
@@ -63,10 +64,22 @@ namespace PartnerWebApp.Controllers
                 return View("Error", new ErrorViewModel { ErrorMessage = authErrorMessage });
             }
 
-            var authUrl = $"{mindbodyAuth["AuthorizationEndpoint"]}?response_mode={mindbodyAuth["ResponceMode"]}" +
-                        $"&client_id={mindbodyAuth["ClientId"]}&redirect_uri={mindbodyAuth["RedirectUrl"]}" +
-                        $"&scope={mindbodyAuth["Scopes"]}&response_type={mindbodyAuth["ResponceType"]}" +
-                        $"&nonce={mindbodyAuth["Nonce"]}&subscriberId={studioId}";
+            var nonce = TokenHelper.GenerateSecureGuid().ToString();
+
+            Response.Cookies.Append("Nonce", nonce, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+            });
+
+            var authUrl = $"{mindbodyAuth["IdentityOrigin"] + mindbodyAuth["AuthorizationEndpoint"]}" +
+                        $"?response_mode={mindbodyAuth["ResponceMode"]}" +
+                        $"&client_id={mindbodyAuth["ClientId"]}" +
+                        $"&redirect_uri={mindbodyAuth["RedirectUrl"]}" +
+                        $"&scope={mindbodyAuth["Scopes"]}" +
+                        $"&response_type={mindbodyAuth["ResponceType"]}" +
+                        $"&nonce={nonce}" +
+                        $"&subscriberId={studioId}";
 
             return Redirect(authUrl);
         }
@@ -74,6 +87,7 @@ namespace PartnerWebApp.Controllers
         [Route("signin-mindbody")]
         public IActionResult SigninMindbody()
         {
+            string nonce = "";
             StringValues code;
             Request.Form.TryGetValue("code", out code);
 
@@ -84,7 +98,7 @@ namespace PartnerWebApp.Controllers
 
             var mindbodyAuth = _configuration.GetSection("Authentication:Mindbody");
 
-            RestClient client = new RestClient(mindbodyAuth["TokenEndpoint"]);
+            RestClient client = new RestClient(mindbodyAuth["IdentityOrigin"] + mindbodyAuth["TokenEndpoint"]);
             RestRequest req = new RestRequest(Method.POST);
             req.AddHeader("accept", "application/json");
             req.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -103,13 +117,25 @@ namespace PartnerWebApp.Controllers
             {
                 var authModel = JsonConvert.DeserializeObject<AuthViewModel>(mindbodyResponse.Content);
 
+                Request.Cookies.TryGetValue("Nonce", out nonce);
+
+                if (string.IsNullOrWhiteSpace(nonce))
+                {
+                    return View("Error", new ErrorViewModel { ErrorMessage = authErrorMessage });
+                }
+
+                // Validate the id_token and nonce to ensure no man-in-the-middle tampering of tokens
+                var isValid = TokenHelper.ValidateToken(authModel.id_token, mindbodyAuth["IdentityOrigin"], mindbodyAuth["IdentityOrigin"] + mindbodyAuth["IdentityValidAudience"], nonce);
+
+                if (!isValid)
+                {
+                    return View("Error", new ErrorViewModel { ErrorMessage = authErrorMessage });
+                }
+
                 Response.Cookies.Append("AccessToken", authModel.access_token, new CookieOptions()
                 {
-                    Expires = DateTime.UtcNow.AddSeconds(authModel.expires_in)
-                });
-                Response.Cookies.Append("RefreshToken", authModel.refresh_token, new CookieOptions()
-                {
-                    Expires = DateTime.UtcNow.AddSeconds(authModel.expires_in)
+                    Expires = DateTime.UtcNow.AddSeconds(authModel.expires_in),
+                    HttpOnly = true
                 });
 
                 return View("Dashboard", authModel);
@@ -134,12 +160,12 @@ namespace PartnerWebApp.Controllers
 
                 Response.Cookies.Append("StudioId", activationData.StudioId, new CookieOptions()
                 {
-                    Expires = DateTime.UtcNow.AddSeconds(3600)
+                    HttpOnly = true
                 });
 
                 Response.Cookies.Append("APIKey", activationData.ApiKey, new CookieOptions()
                 {
-                    Expires = DateTime.UtcNow.AddSeconds(3600)
+                    HttpOnly = true
                 });
 
                 return View("Index", activationDataModel);
